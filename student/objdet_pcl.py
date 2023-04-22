@@ -59,18 +59,30 @@ def show_range_image(frame, lidar_name):
     print("student task ID_S1_EX1")
 
     # step 1 : extract lidar data and range image for the roof-mounted lidar
+    lidar_data = [x for x in frame.lasers if x.name == dataset_pb2.LaserName.TOP][0]
     
+        
     # step 2 : extract the range and the intensity channel from the range image
+    range_string = zlib.decompress(lidar_data.ri_return1.range_image_compressed)
+    range_image = dataset_pb2.MatrixFloat()
+    range_image.ParseFromString(range_string)
+    range_image = np.array(range_image.data).reshape(range_image.shape.dims)
+    range_channel = range_image[:,:,0]
+    intensity_channel = range_image[:,:,1]
     
     # step 3 : set values <0 to zero
+    range_channel[range_channel < 0] = 0
+    intensity_channel[intensity_channel < 0] = 0
     
     # step 4 : map the range channel onto an 8-bit scale and make sure that the full range of values is appropriately considered
-    
+    range_channel = range_channel * 255 / (range_channel.max() - range_channel.min())
+
     # step 5 : map the intensity channel onto an 8-bit scale and normalize with the difference between the 1- and 99-percentile to mitigate the influence of outliers
+    intensity_channel = intensity_channel * 255 / (np.percentile(intensity_channel, 90) - np.percentile(intensity_channel, 1))
     
     # step 6 : stack the range and intensity image vertically using np.vstack and convert the result to an unsigned 8-bit integer
+    img_range_intensity = np.vstack((range_channel, intensity_channel)).astype(int)
     
-    img_range_intensity = [] # remove after implementing all steps
     #######
     ####### ID_S1_EX1 END #######     
     
@@ -95,7 +107,7 @@ def bev_from_pcl(lidar_pcl, configs):
     print("student task ID_S2_EX1")
 
     ## step 1 :  compute bev-map discretization by dividing x-range by the bev-image height (see configs)
-
+    
     ## step 2 : create a copy of the lidar pcl and transform all metrix x-coordinates into bev-image coordinates    
 
     # step 3 : perform the same operation as in step 2 for the y-coordinates but make sure that no negative bev-coordinates occur
