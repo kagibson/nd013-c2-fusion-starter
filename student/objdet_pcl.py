@@ -29,6 +29,10 @@ from tools.waymo_reader.simple_waymo_open_dataset_reader import dataset_pb2, lab
 # object detection tools and helper functions
 import misc.objdet_tools as tools
 
+import zlib
+import open3d as o3d
+
+visualizer = None
 
 # visualize lidar point-cloud
 def show_pcl(pcl):
@@ -36,17 +40,39 @@ def show_pcl(pcl):
     ####### ID_S1_EX2 START #######     
     #######
     print("student task ID_S1_EX2")
-
-    # step 1 : initialize open3d with key callback and create window
+    global visualizer, window, pcl_display, wait_for_key_press
+    first_frame = False
+    wait_for_key_press = True
     
-    # step 2 : create instance of open3d point-cloud class
+    def next_frame_callback(visualizer):
+        global wait_for_key_press
+        wait_for_key_press = False
+        
+    # step 1 : initialize open3d with key callback and create window
+    if visualizer is None:
+        visualizer = o3d.visualization.VisualizerWithKeyCallback()
+        visualizer.register_key_callback(262, next_frame_callback)
+        pcl_display = o3d.geometry.PointCloud()
+        first_frame = True
+        window = visualizer.create_window()
 
+    # step 2 : create instance of open3d point-cloud class    
     # step 3 : set points in pcd instance by converting the point-cloud into 3d vectors (using open3d function Vector3dVector)
-
+    pcl_display.points = o3d.utility.Vector3dVector(pcl[:,0:3])
+        
     # step 4 : for the first frame, add the pcd instance to visualization using add_geometry; for all other frames, use update_geometry instead
+    if first_frame:
+        visualizer.add_geometry(pcl_display)
+    else:
+        visualizer.update_geometry(pcl_display)  
     
     # step 5 : visualize point cloud and keep window open until right-arrow is pressed (key-code 262)
-
+    # calling run() multiple times on the same visualizer doesn't seem to work, so instead
+    # blocking until key pressed. Busy loop so probably a better way to do this.
+    while wait_for_key_press:
+        visualizer.poll_events()
+        visualizer.update_renderer()
+         
     #######
     ####### ID_S1_EX2 END #######     
        
@@ -107,7 +133,7 @@ def bev_from_pcl(lidar_pcl, configs):
     print("student task ID_S2_EX1")
 
     ## step 1 :  compute bev-map discretization by dividing x-range by the bev-image height (see configs)
-    
+
     ## step 2 : create a copy of the lidar pcl and transform all metrix x-coordinates into bev-image coordinates    
 
     # step 3 : perform the same operation as in step 2 for the y-coordinates but make sure that no negative bev-coordinates occur
