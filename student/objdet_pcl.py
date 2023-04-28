@@ -40,8 +40,9 @@ def show_pcl(pcl):
     ####### ID_S1_EX2 START #######     
     #######
     print("student task ID_S1_EX2")
-    global visualizer, window, pcl_display, wait_for_key_press
+    global visualizer, window, pcl_display
     first_frame = False
+    global wait_for_key_press
     wait_for_key_press = True
     
     def next_frame_callback(visualizer):
@@ -133,12 +134,17 @@ def bev_from_pcl(lidar_pcl, configs):
     print("student task ID_S2_EX1")
 
     ## step 1 :  compute bev-map discretization by dividing x-range by the bev-image height (see configs)
-
-    ## step 2 : create a copy of the lidar pcl and transform all metrix x-coordinates into bev-image coordinates    
+    discrete = configs.bev_height / (configs.lim_x[1] - configs.lim_x[0])
+    
+    ## step 2 : create a copy of the lidar pcl and transform all matrix x-coordinates into bev-image coordinates 
+    lidar_pcl_cpy = np.copy(lidar_pcl)
+    lidar_pcl_cpy[:,0] = (lidar_pcl_cpy[:,0] * discrete).astype(int)
 
     # step 3 : perform the same operation as in step 2 for the y-coordinates but make sure that no negative bev-coordinates occur
-
+    lidar_pcl_cpy[:,1] = ((lidar_pcl_cpy[:,1] - configs.lim_y[0]) * discrete).astype(int)
+        
     # step 4 : visualize point-cloud using the function show_pcl from a previous task
+    #show_pcl(lidar_pcl_cpy)
     
     #######
     ####### ID_S2_EX1 END #######     
@@ -150,17 +156,28 @@ def bev_from_pcl(lidar_pcl, configs):
     print("student task ID_S2_EX2")
 
     ## step 1 : create a numpy array filled with zeros which has the same dimensions as the BEV map
-
+    bev_arr = np.zeros((configs.bev_width, configs.bev_height))
+    
     # step 2 : re-arrange elements in lidar_pcl_cpy by sorting first by x, then y, then -z (use numpy.lexsort)
-
+    idx = np.lexsort((-lidar_pcl_cpy[:,2], lidar_pcl_cpy[:,1], lidar_pcl_cpy[:,0]))
+    lidar_pcl_cpy = lidar_pcl_cpy[idx]
     ## step 3 : extract all points with identical x and y such that only the top-most z-coordinate is kept (use numpy.unique)
     ##          also, store the number of points per x,y-cell in a variable named "counts" for use in the next task
-
+    unique, indexes, counts = np.unique(lidar_pcl_cpy[:,0:2], axis=0, return_index=True, return_counts=True)
+    lidar_pcl_top = lidar_pcl_cpy[indexes]
+    
     ## step 4 : assign the intensity value of each unique entry in lidar_top_pcl to the intensity map 
     ##          make sure that the intensity is scaled in such a way that objects of interest (e.g. vehicles) are clearly visible    
     ##          also, make sure that the influence of outliers is mitigated by normalizing intensity on the difference between the max. and min. value within the point cloud
-
+    intensity_map = np.zeros((configs.bev_height, configs.bev_width))
+    intensity_min = lidar_pcl_top[:,3].min()
+    intensity_max = lidar_pcl_top[:,3].max()
+    for point in lidar_pcl_top: 
+        intensity_map[int(point[0]),int(point[1])] = (point[3] * 255 * 0.8*intensity_max) / (intensity_max - intensity_min)
+        
     ## step 5 : temporarily visualize the intensity map using OpenCV to make sure that vehicles separate well from the background
+    #cv2.imshow("image", intensity_map)
+    #cv2.waitKey()
 
     #######
     ####### ID_S2_EX2 END ####### 
