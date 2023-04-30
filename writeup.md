@@ -28,10 +28,10 @@
 
 ![Vehicles 10](img/pcl10.png)
 
-Identifiable common features across these vehicle detections are:
+Identifiable common features across the visible vehicles in the point clouds are:
 - four tires
 - side-view mirrors
 - front and back windshield
 - some number of side windows
 
-
+Other objects that are visible within the point clouds include bushes, trees and walls.
