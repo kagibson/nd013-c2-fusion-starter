@@ -1,15 +1,37 @@
-# Writeup: Track 3D-Objects Over Time
+# Writeup: 3D Object Detection Midterm
 
-Please use this starter template to answer the following questions:
+## Section 1
 
-### 1. Write a short recap of the four tracking steps and what you implemented there (filter, track management, association, camera fusion). Which results did you achieve? Which part of the project was most difficult for you to complete, and why?
+### Exercise 1
 
+### Exercise 2
 
-### 2. Do you see any benefits in camera-lidar fusion compared to lidar-only tracking (in theory and in your concrete results)? 
+![Point Cloud](img/pcl.png)
 
+![Vehicles 1](img/pcl1.png)
 
-### 3. Which challenges will a sensor fusion system face in real-life scenarios? Did you see any of these challenges in the project?
+![Vehicles 2](img/pcl2.png)
 
+![Vehicles 3](img/pcl3.png)
 
-### 4. Can you think of ways to improve your tracking results in the future?
+![Vehicles 4](img/pcl4.png)
+
+![Vehicles 5](img/pcl5.png)
+
+![Vehicles 6](img/pcl6.png)
+
+![Vehicles 7](img/pcl7.png)
+
+![Vehicles 8](img/pcl8.png)
+
+![Vehicles 9](img/pcl9.png)
+
+![Vehicles 10](img/pcl10.png)
+
+Identifiable common features across these vehicle detections are:
+- four tires
+- side-view mirrors
+- front and back windshield
+- some number of side windows
+
 
