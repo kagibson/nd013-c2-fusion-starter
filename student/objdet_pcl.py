@@ -94,6 +94,14 @@ def show_range_image(frame, lidar_name):
     range_image = dataset_pb2.MatrixFloat()
     range_image.ParseFromString(range_string)
     range_image = np.array(range_image.data).reshape(range_image.shape.dims)
+    
+    # only use +-90degrees from center of forward facing axis
+    column_degrees = 360.0 / range_image.shape[1]
+    num_cols_90deg = int(90.0 / column_degrees)
+    leftmost_col = int(range_image.shape[1] / 2) - num_cols_90deg
+    rightmost_col = int(range_image.shape[1] / 2) + num_cols_90deg
+    range_image = range_image[:,leftmost_col:rightmost_col,:]
+    
     range_channel = range_image[:,:,0]
     intensity_channel = range_image[:,:,1]
     

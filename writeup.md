@@ -4,6 +4,8 @@
 
 ### Exercise 1
 
+![Range Image](img/rangeimage.png)
+
 ### Exercise 2
 
 ![Point Cloud](img/pcl.png)
