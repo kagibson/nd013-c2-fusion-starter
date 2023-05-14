@@ -37,3 +37,17 @@ Identifiable common features across the visible vehicles in the point clouds are
 - some number of side windows
 
 Other objects that are visible within the point clouds include bushes, trees and walls.
+
+## Section 2
+
+### Exercise 1
+
+![PCL in BEV space](img/pcl_to_bev.png)
+
+### Exercise 2
+
+![BEV Intensity](img/intensity_bev.png)
+
+### Exercise 3
+
+![BEV Height](img/height_bev.png)

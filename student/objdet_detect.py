@@ -57,11 +57,37 @@ def load_configs_model(model_name='darknet', configs=None):
         configs.pin_memory = True
         configs.use_giou_loss = False
 
-    elif model_name == 'fpn_resnet':
+    elif model_name == 'resnet':
         ####### ID_S3_EX1-3 START #######     
         #######
         print("student task ID_S3_EX1-3")
+        configs.model_path = os.path.join(parent_path, 'tools', 'objdet_models', 'resnet')
+        configs.pretrained_filename = os.path.join(configs.model_path, 'pretrained', 'fpn_resnet_18_epoch_300.pth')
+        configs.arch = 'fpn_resnet'
+        configs.batch_size = 1
+        configs.conf_thresh = 0.5
+        configs.distributed = False
+        configs.img_size = 608
+        configs.nms_thresh = 0.4
+        configs.num_samples = None
+        configs.num_workers = 1
+        configs.pin_memory = True
+        configs.imagenet_pretrained = False
+        configs.head_conv = 64
+        configs.num_classes = 3
+        configs.num_center_offset = 2
+        configs.num_z = 1
+        configs.num_dim = 3
+        configs.num_direction = 2  # sin, cos
 
+        configs.heads = {
+            'hm_cen': configs.num_classes,
+            'cen_offset': configs.num_center_offset,
+            'direction': configs.num_direction,
+            'z_coor': configs.num_z,
+            'dim': configs.num_dim
+        }        
+        configs.head_conv = 64
         #######
         ####### ID_S3_EX1-3 END #######     
 
@@ -77,7 +103,7 @@ def load_configs_model(model_name='darknet', configs=None):
 
 
 # load all object-detection parameters into an edict
-def load_configs(model_name='fpn_resnet', configs=None):
+def load_configs(model_name='resnet', configs=None):
 
     # init config file, if none has been passed
     if configs==None:
@@ -118,7 +144,9 @@ def create_model(configs):
         ####### ID_S3_EX1-4 START #######     
         #######
         print("student task ID_S3_EX1-4")
-
+        model = fpn_resnet.get_pose_net(num_layers=18, heads=configs.heads, head_conv=configs.head_conv,
+                                        imagenet_pretrained=configs.imagenet_pretrained)
+        
         #######
         ####### ID_S3_EX1-4 END #######     
     
@@ -145,7 +173,7 @@ def detect_objects(input_bev_maps, model, configs):
 
         # perform inference
         outputs = model(input_bev_maps)
-
+        print(outputs)
         # decode model output into target object format
         if 'darknet' in configs.arch:
 
@@ -167,6 +195,13 @@ def detect_objects(input_bev_maps, model, configs):
             ####### ID_S3_EX1-5 START #######     
             #######
             print("student task ID_S3_EX1-5")
+            detections = decode(outputs['hm_cen'],
+                                outputs['cen_offset'],
+                                outputs['direction'],
+                                outputs['z_coor'],
+                                outputs['dim'])
+            
+            detections_post = post_processing(detections,configs)
 
             #######
             ####### ID_S3_EX1-5 END #######     
