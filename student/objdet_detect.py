@@ -228,7 +228,7 @@ def detect_objects(input_bev_maps, model, configs):
             l = (bev_l / configs.bev_height) * (configs.lim_y[1] - configs.lim_y[0])
             
             ## step 4 : append the current object to the 'objects' array
-            objects.append([cls_, x, y, z, h, w, l, yaw])
+            objects.append([1, x, y, z, h, w, l, yaw])
         
     #######
     ####### ID_S3_EX2 START #######   
