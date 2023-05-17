@@ -51,3 +51,21 @@ Other objects that are visible within the point clouds include bushes, trees and
 ### Exercise 3
 
 ![BEV Height](img/height_bev.png)
+
+## Section 3
+
+### Exercise 2
+
+Detections using Darknet model:
+
+![Detections Using Darknet](img/darknet_detections.png)
+
+Detections using resnet:
+
+![Detections using Resnet](img/resnet_detections.png)
+
+### Exercise 3
+
+`precision = 1.0, recall = 0.6666666666666666`
+
+![Detection Stats](img/stats.png)
