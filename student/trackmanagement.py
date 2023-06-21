@@ -47,8 +47,8 @@ class Track:
         P_vel[2][2] = params.sigma_p66**2
         self.P[0:3, 0:3] = P_pos
         self.P[3:6, 3:6] = P_vel
-        self.state = 'confirmed'
-        self.score = 1/params.window
+        self.state = 'initialized'
+        self.score = 1.0/params.window
         
         ############
         # END student code
@@ -106,11 +106,14 @@ class Trackmanagement:
             # check visibility    
             if meas_list: # if not empty
                 if meas_list[0].sensor.in_fov(track.x):
-                    # your code goes here
-                    pass 
+                    track.score -= 1.0 / params.window
 
         # delete old tracks   
-
+        for track in self.track_list:
+            if (track.state == 'confirmed' and track.score < params.delete_threshold) or \
+                    (track.P[0,0] > params.max_P) or \
+                    (track.P[1,1] > params.max_P):
+                self.delete_track(track)
         ############
         # END student code
         ############ 
@@ -139,8 +142,11 @@ class Trackmanagement:
         # - increase track score
         # - set track state to 'tentative' or 'confirmed'
         ############
-
-        pass
+        track.score += 1.0 / params.window
+        if track.state == 'initialized' and track.score >= params.tentative_threshold:
+            track.state = 'tentative'
+        elif track.state == 'tentative' and track.score >= params.confirmed_threshold:
+            track.state = 'confirmed'
         
         ############
         # END student code
