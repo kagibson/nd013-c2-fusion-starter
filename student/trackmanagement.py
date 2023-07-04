@@ -34,11 +34,12 @@ class Track:
         # unassigned measurement transformed from sensor to vehicle coordinates
         # - initialize track state and track score with appropriate values
         ############
-
-        self.x = np.zeros((6,1))
-        x_sens = np.ones((4,1))
-        x_sens[0:3] = meas.z[0:3]
-        self.x[0:3] = (meas.sensor.sens_to_veh @ x_sens)[0:3]
+        dim_meas = len(meas.z)
+        dim_state = params.dim_state
+        self.x = np.zeros((dim_state,1))
+        x_sens = np.ones((dim_meas+1,1))
+        x_sens[0:dim_meas] = meas.z[0:dim_meas]
+        self.x[0:dim_meas] = (meas.sensor.sens_to_veh @ x_sens)[0:dim_meas]
         self.P = np.zeros((6,6))
         P_pos = M_rot @ meas.R @ np.transpose(M_rot)
         P_vel = np.zeros((3,3))
@@ -111,8 +112,7 @@ class Trackmanagement:
         # delete old tracks   
         for track in self.track_list:
             if (track.state == 'confirmed' and track.score < params.delete_threshold) or \
-                    (track.P[0,0] > params.max_P) or \
-                    (track.P[1,1] > params.max_P):
+                    (track.P[0,0] > params.max_P) or (track.P[1,1] > params.max_P):
                 self.delete_track(track)
         ############
         # END student code
