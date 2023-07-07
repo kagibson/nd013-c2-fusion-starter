@@ -59,16 +59,15 @@ class Association:
         # - remove corresponding track and measurement from unassigned_tracks and unassigned_meas
         # - return this track and measurement
         ############
-        idx = np.unravel_index(self.association_matrix.argmin(), self.association_matrix.shape)
-        if idx == np.inf:
+        idx_track, idx_meas = np.unravel_index(self.association_matrix.argmin(), self.association_matrix.shape)
+        min_association = self.association_matrix[idx_track,idx_meas]
+        if min_association == np.inf:
             return np.nan, np.nan
-        self.association_matrix = np.delete(self.association_matrix, idx[0], 0)
-        self.association_matrix = np.delete(self.association_matrix, idx[1], 1)
-        update_track = idx[0]
-        update_meas = idx[1]
+        self.association_matrix = np.delete(self.association_matrix, idx_track, 0)
+        self.association_matrix = np.delete(self.association_matrix, idx_meas, 1)
         
-        update_track = self.unassigned_tracks[idx[0]]
-        update_meas = self.unassigned_meas[idx[1]]
+        update_track = self.unassigned_tracks[idx_track]
+        update_meas = self.unassigned_meas[idx_meas]
         self.unassigned_tracks.remove(update_track)
         self.unassigned_meas.remove(update_meas)
         ############

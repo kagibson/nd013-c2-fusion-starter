@@ -7,5 +7,8 @@
 
 ## Step 3
 
-![Step 3 RMSE](img/step3_rmse.png)
+![Step 3 RMSE](img/step_3_rmse.png)
 
+## Step 4
+
+![Step 4 RMSE](img/step_4_rmse.png)
