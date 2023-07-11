@@ -53,3 +53,7 @@ There are a number of ways that we could improve the tracking results of this pr
 Another potential improvement would be to try out other association methods.
 
 We could also change the threshold for gating.
+
+Finally we could change our motion model to a bicycle model in order to more accurately predict vehicle motion.
+
+![results video](img/result.mp4)
